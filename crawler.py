@@ -6,16 +6,18 @@
 '''
 
 import json
+import urllib
 
 class Crawler:
 	def __init__(self):
-		with open('kimonoDataCritic.json') as data_file:
-			self.data_critic = json.load(data_file)
-		with open('kimonoDataUser.json') as data_file:
-			self.data_user = json.load(data_file)
+		
+		self.data_critic = json.load(urllib.urlopen("https://www.kimonolabs.com/api/3xwub6d2?apikey=wy3dBuCMFAFaeHy2nWTQCYliOCKPNvEw"))
+		
+		self.data_user = json.load(urllib.urlopen("https://www.kimonolabs.com/api/7ewaqu4c?apikey=wy3dBuCMFAFaeHy2nWTQCYliOCKPNvEw"))
 
 	def add(self,x,y): return x+y
 	
+		
 	def critic_crawler(self):	
 		total = 0
 		# print(data["results"]["collection1"][0]["acc_score"])
