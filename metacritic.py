@@ -13,12 +13,14 @@ def add(x,y): return x+y
 totals = []
 crawl = Crawler()
 
-totals.append(crawl.critic_crawler())
-totals.append(crawl.overall_critic_crawler())
-totals.append(crawl.user_crawler())
-totals.append(crawl.overall_user_crawler())
+totals.append(crawl.years_critic_crawler())
 
-added_totals = reduce(add, totals)
-complete_avg = added_totals / len(totals)
+# totals.append(crawl.critic_crawler())
+# totals.append(crawl.overall_critic_crawler())
+# totals.append(crawl.user_crawler())
+# totals.append(crawl.overall_user_crawler())
 
-print complete_avg
+# added_totals = reduce(add, totals)
+# complete_avg = added_totals / len(totals)
+
+# print complete_avg
