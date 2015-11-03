@@ -12,7 +12,7 @@ I wanted to leverage Metacritic to analyze how we use ratings. It all started be
 - [ ] grab individual movie scores from a large amount of movies
 - [ ] grab metacritic user scores of a large amount of movies
 - [ ] grab individual critic scores from a large amount of movies
-- [ ] TODO LIST:
+- [ ] **TODO** LIST:
 	- [ ] implement other ratings (games, etc.)
 	- [ ] research other sources for ratings data
 	- [ ] research tools to graphiy current datasets
