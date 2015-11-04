@@ -1,6 +1,6 @@
 # Metacritic Crawl
 ##Summary
-Using Kimino, crawl through metacritic's critic and user scores to find an average. 
+Crawl through metacritic's critic and user scores to find an average. 
 ##Purpose
 I wanted to leverage Metacritic to analyze how we use ratings. It all started because I, like many people, think that average ratings tend more toward "7/10" rather than a true average "5/10". Using metacritic, I want to analyze this hypothsis. 
 ##Plan
@@ -17,3 +17,7 @@ I wanted to leverage Metacritic to analyze how we use ratings. It all started be
 	- [ ] research other sources for ratings data
 	- [ ] research tools to graphiy current datasets
 - [ ] write-up an analysis of the data
+
+##History
+- 11/3/2015: Inital Commit
+- 11/4/2015: Switched from Kimono to BeautifulSoup and lxml
