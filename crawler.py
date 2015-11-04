@@ -7,15 +7,18 @@
 
 import json
 import urllib
+import urllib2
+import time
+from urllib2 import urlopen
 from bs4 import BeautifulSoup 
+
+BASE_URL = "http://www.metacritic.com/browse/movies/score/metascore/all/filtered?sort=desc&page="
 
 class Crawler:
 	def __init__(self):
-			self.print_string = ""
-			self.query = ""
-			self.data = {}
-			self.data_two = {}
-			self.data_three = {}
+		self.print_string = ""
+		self.query = ""
+		self.data = list()
 		
 	def add(self,x,y): return x+y
 	
@@ -23,32 +26,32 @@ class Crawler:
 		if data_name == "metacritic-critics":
 			self.print_string = "Metacritic Critic's Average: "
 			self.query = "score"
-			self.data = json.load(urllib.urlopen("https://www.kimonolabs.com/api/54z63qyw?apikey=wy3dBuCMFAFaeHy2nWTQCYliOCKPNvEw"))
-			self.data_two = json.load(urllib.urlopen("https://www.kimonolabs.com/api/d44be2pm?apikey=wy3dBuCMFAFaeHy2nWTQCYliOCKPNvEw"))
-			self.data_three = json.load(urllib.urlopen("https://www.kimonolabs.com/api/biec8bjm?apikey=wy3dBuCMFAFaeHy2nWTQCYliOCKPNvEw"))
+			self.data = list()
 		
-	def super_crawler(self):
-		total = 0
-		# print(data["results"]["collection1"][0]["acc_score"])
-		acc_list = []
+	def webscrapper_test(self, page):
+		for page in range (0, 89):	
+			print "Waiting.",
+			time.sleep(.3)
+			print ".",
+			time.sleep(.3)
+			print "."
+			time.sleep(.3)
 			
-		if self.data:
-			for x in self.data["results"]["collection1"]:
-				acc_list.append(int(x[self.query]))
-		if self.data_two:
-			for x in self.data_two["results"]["collection1"]:
-				acc_list.append(int(x[self.query]))
-		if self.data_three:
-			for x in self.data_three["results"]["collection1"]:
-				acc_list.append(int(x[self.query]))
-				
-		self.data = {}
-		self.data_two = {}
-		self.data_three = {}
-
-		added_acc = reduce(self.add, acc_list)
-		total = added_acc / len(acc_list)
-
-		print self.print_string + str(total)
+			req = urllib2.Request(BASE_URL + str(page), headers={'User-Agent' : "Magic Browser"})
+			html = urlopen(req)
+			soup = BeautifulSoup(html, "lxml")
+			metasoup = soup.find("div", "content_section mpu_layout")
+			temp_data = [int(sc.div.string) for sc in metasoup.find_all("div","product_score")]
+			self.data.extend(temp_data)
+			
+			print "Page Complete: " + str(page)
 		
-		return total
+		f = open('results.tx', 'w')
+		f.write(str(self.data))
+		return
+
+
+
+		
+		
+		

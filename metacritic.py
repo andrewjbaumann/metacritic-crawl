@@ -12,10 +12,8 @@ def add(x,y): return x+y
 	
 totals = []
 crawl = Crawler()
-crawl.set_json("metacritic-critics")
-blank = crawl.super_crawler()
+crawl.webscrapper_test(0)
 
-print blank
 
 
 # totals.append(crawl.years_critic_crawler())
