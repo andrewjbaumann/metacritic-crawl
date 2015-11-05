@@ -8,7 +8,9 @@
 import json
 import urllib
 import urllib2
+import pprint
 import time
+import bs4
 from urllib2 import urlopen
 from bs4 import BeautifulSoup 
 
@@ -29,22 +31,32 @@ class Crawler:
 			self.data = list()
 		
 	def webscrapper_test(self, page):
-		for page in range (0, 89):	
-			print "Waiting.",
-			time.sleep(.3)
-			print ".",
-			time.sleep(.3)
-			print "."
-			time.sleep(.3)
+		for page in range (0,89):	
+			# print "Waiting.",
+			# time.sleep(.3)
+			# print ".",
+			# time.sleep(.3)
+			# print "."
 			
 			req = urllib2.Request(BASE_URL + str(page), headers={'User-Agent' : "Magic Browser"})
 			html = urlopen(req)
 			soup = BeautifulSoup(html, "lxml")
 			metasoup = soup.find("div", "content_section mpu_layout")
-			temp_data = [int(sc.div.string) for sc in metasoup.find_all("div","product_score")]
-			self.data.extend(temp_data)
-			
-			print "Page Complete: " + str(page)
+			try: 
+				temp_data = [sc.div.string for sc in metasoup.find_all("div","product_score")]
+				if type(temp_data[-1]) != type(temp_data[0]):
+					print type(temp_data[-1])
+					del temp_data[-1]
+				temp_data = [int(i) for i in temp_data]
+				self.data.extend(temp_data)
+				# pprint.pprint(temp_data)
+				print len(temp_data)
+				print "Page Complete: " + str(page)
+			except TypeError:	
+				pprint.pprint(temp_data)
+				print len(temp_data)
+				print "Page Failed: " + str(page)
+
 		
 		f = open('results.tx', 'w')
 		f.write(str(self.data))
