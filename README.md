@@ -8,16 +8,17 @@ I wanted to leverage Metacritic to analyze how we use ratings. It all started be
 - [x] grab all critic ratings from one movie
 - [x] grab all user ratings from one movie
 - [x] compute averages of above data sets
-- [ ] grab metacritic critic score of a large amount of movies
+- [x] grab metacritic critic score of a large amount of movies
 - [ ] grab individual movie scores from a large amount of movies
 - [ ] grab metacritic user scores of a large amount of movies
 - [ ] grab individual critic scores from a large amount of movies
 - [ ] **TODO** LIST:
-	- [ ] implement other ratings (games, etc.)
+	- [x] implement other ratings (games, etc.)
 	- [ ] research other sources for ratings data
-	- [ ] research tools to graphiy current datasets
+	- [ ] research tools to graphify current datasets
 - [ ] write-up an analysis of the data
 
 ##History
 - 11/3/2015: Inital Commit
 - 11/4/2015: Switched from Kimono to BeautifulSoup and lxml
+- 11/6/2015: Added Multithreading
