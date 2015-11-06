@@ -5,14 +5,15 @@
 	@additional: using Kimino 
 '''
 import json
+from multiprocessing import Process, freeze_support
 from crawler import Crawler
 
 def add(x,y): return x+y
 
-	
-totals = []
-crawl = Crawler()
-crawl.webscrapper_test(0)
+if __name__ == '__main__':
+	freeze_support()
+	crawl = Crawler()
+	crawl.set_crawl()
 
 
 
