@@ -11,7 +11,7 @@ import urllib2
 import pprint
 import time
 import bs4
-from multiprocessing import Pool, Process
+from multiprocessing import Process, Manager
 from urllib2 import urlopen
 from bs4 import BeautifulSoup 
 
@@ -21,10 +21,16 @@ class Crawler:
 		self.query = ""
 		self.data = list()
 		self.metacritic_base_url = "http://www.metacritic.com/browse/replace/score/metascore/all/filtered?sort=desc&page="
+		self.avg = 0
 		
 	def add(self,x,y): return x+y
+	def calc_avg(self): self.avg = float(reduce(lambda x, y: x+y, self.data) / len(self.data))
+	def print_avg(self): print self.avg
 	
 	def set_crawl(self):
+		manager = Manager()
+		self.data = manager.list()
+		
 		movies_url = self.metacritic_base_url.replace("replace","movies")
 		games_url = self.metacritic_base_url.replace("replace","games")
 		albums_url = self.metacritic_base_url.replace("replace","albums")
@@ -48,8 +54,10 @@ class Crawler:
 		f = open('results.txt ', 'w')
 		f.write(str(self.data))
 		
+		self.calc_avg()
+		
 	def metacritic_webscrapper(self, max_page, url, purpose):
-		for page in range (0,max_page):				
+		for page in range (0,4):				
 			req = urllib2.Request(url + str(page), headers={'User-Agent' : "Magic Browser"})
 			html = urlopen(req)
 			soup = BeautifulSoup(html, "lxml")
@@ -64,10 +72,5 @@ class Crawler:
 			except TypeError:	
 				print purpose + " Page Failed: " + str(page)
 
-		return
-
-
-
-		
-		
-		
+		self.data.extend(temp_data)		
+	
