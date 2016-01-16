@@ -4,14 +4,13 @@
 @contact: abaumann@columnit.com	
 @additional: using BeautifulSoup
 '''
-
-import json
+import json 
 import urllib
 import urllib2
-import pprint
-import time
+# import time
 import bs4
 from multiprocessing import Process, Manager
+from itertools import chain 
 from urllib2 import urlopen
 from bs4 import BeautifulSoup 
 
@@ -85,17 +84,36 @@ class Crawler:
 				break
 
 	def critic_scrapper(self,soup):
-		data = [sc.div.string for sc in soup.find_all("div","product_score")]
-		if type(data[-1]) != type(data[0]):
-			del data[-1]
-		data = [int(i) for i in data]
-		self.critic_data.extend(data)
-	
-	def user_scrapper(self,soup):
-		data = [sc.string for sc in soup.find_all("span","data textscore textscore_favorable")]
-		filter(lambda x: x == "tbd", data)
-		if type(data[-1]) != type(data[0]):
-			del data[-1]
-		data = [int(float(i)*10) for i in data]
-		self.user_data.extend(data)
-	
+		c_scores = [sc.div.string for sc in soup.find_all("div","product_score")]
+		u_scores = [sc.string for sc in soup.find_all("span","scores textscore textscore_favorable")]
+		temp_div = [sc for sc in soup.find_all("div", "product_item product_title")] 
+		urls = [sc.a.get('href') for sc in temp_div]
+		names = [sc.a for sc in temp_div]
+		
+		
+		data_coll = list(chain(*zip(c_scores, u_scores, urls, names)))
+				
+		filter(lambda x: x == "tbd", u_scores)
+		if type(c_scores[-1]) != type(c_scores[0]):
+			del c_scores[-1]
+		if type(u_scores[-1]) != type(u_scores[0]):
+			del u_scores[-1]
+		
+		c_scores = [int(i) for i in c_scores]
+		u_scores = [int(float(i)*10) for i in u_scores]
+		
+		print u_scores
+		
+		self.critic_data.extend(c_scores)
+		self.user_data.extend(u_scores)
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

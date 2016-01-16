@@ -1,4 +1,3 @@
-import json
 import numpy as npy
 import matplotlib.pyplot as pyplot
 from chainer import FunctionSet, Variable, optimizers, serializers 

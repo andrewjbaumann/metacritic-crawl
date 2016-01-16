@@ -3,7 +3,6 @@
 @purpose: crawl metacritic's scores, and assemble some data (avg, etc)
 @contact: abaumann@columnit.com	
 '''
-import json
 from multiprocessing import Process, freeze_support
 from crawler import Crawler
 
