@@ -13,4 +13,3 @@ if __name__ == '__main__':
 	freeze_support()
 	crawl = Crawler()
 	crawl.set_crawl()
-	crawl.print_avg()

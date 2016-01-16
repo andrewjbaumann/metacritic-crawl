@@ -17,29 +17,29 @@ from bs4 import BeautifulSoup
 
 class Crawler:
 	def __init__(self):
-		self.print_string = ""
-		self.query = ""
-		self.data = list()
+		self.user_data = list()
+		self.critic_data = list()
 		self.metacritic_base_url = "http://www.metacritic.com/browse/replace/score/metascore/all/filtered?sort=desc&page="
-		self.avg = 0
+		self.metacritic_year_url = "http://www.metacritic.com/browse/<genre>/score/metascore/year/filtered?view=condensed&year_selected=<year>&sort=desc&page="
+		self.years_dict = dict()		
 		
 	def add(self,x,y): return x+y
-	def calc_avg(self): self.avg = float(reduce(lambda x, y: x+y, self.data) / len(self.data))
-	def print_avg(self): print self.avg
+	def calc_avg(self,data): return float(reduce(lambda x, y: x+y, data) / len(data))
 	
 	def set_crawl(self):
 		manager = Manager()
-		self.data = manager.list()
+		self.user_data = manager.list()
+		self.critic_data = manager.list()
 		
 		movies_url = self.metacritic_base_url.replace("replace","movies")
 		games_url = self.metacritic_base_url.replace("replace","games")
 		albums_url = self.metacritic_base_url.replace("replace","albums")
 		tv_url = self.metacritic_base_url.replace("replace","tv")
 		
-		pMovie = Process(target=self.metacritic_webscrapper, args=(89, movies_url, "Movies"))		
-		pGames = Process(target=self.metacritic_webscrapper, args=(127, games_url, "Games"))	
-		pMusic = Process(target=self.metacritic_webscrapper, args=(95, albums_url, "Music"))	
-		pTV = Process(target=self.metacritic_webscrapper, args=(17, tv_url, "TV"))
+		pMovie = Process(target=self.metacritic_scrapper, args=(movies_url, "Movies"))		
+		pGames = Process(target=self.metacritic_scrapper, args=(games_url, "Games"))	
+		pMusic = Process(target=self.metacritic_scrapper, args=(albums_url, "Music"))	
+		pTV = Process(target=self.metacritic_scrapper, args=(tv_url, "TV"))
 		
 		pTV.start()
 		pMovie.start()
@@ -52,25 +52,50 @@ class Crawler:
 		pGames.join()
 		
 		f = open('results.txt ', 'w')
-		f.write(str(self.data))
+		f.write(str(self.user_data) + "\n\n" + str(self.critic_data))
 		
-		self.calc_avg()
+		user_avg = self.calc_avg(self.user_data)
+		critic_avg = self.calc_avg(self.critic_data)
 		
-	def metacritic_webscrapper(self, max_page, url, purpose):
-		for page in range (0,4):				
+		print "\nUser average: " + str(user_avg)
+		print "Critic average: " + str(critic_avg)
+		print "Overall average: " + str(self.calc_avg([user_avg, critic_avg]))
+		
+	def year_crawl(self):
+		manager = Manager()
+		self.data = manager.list()
+		
+		movies_url = self.metacritic_year_url.replace("genre","movies")
+		movies_url = self.metacritic_year_url.replace("genre","games")
+		movies_url = self.metacritic_year_url.replace("genre","albums")
+		movies_url = self.metacritic_year_url.replace("genre","tv")
+		
+		
+	def metacritic_scrapper(self, url, purpose):
+		for page in range (0,1):				
 			req = urllib2.Request(url + str(page), headers={'User-Agent' : "Magic Browser"})
 			html = urlopen(req)
 			soup = BeautifulSoup(html, "lxml")
-			metasoup = soup.find("div", "content_section mpu_layout")
-			try: 
-				temp_data = [sc.div.string for sc in metasoup.find_all("div","product_score")]
-				if type(temp_data[-1]) != type(temp_data[0]):
-					del temp_data[-1]
-				temp_data = [int(i) for i in temp_data]
-				self.data.extend(temp_data)
+			try:
+				self.critic_scrapper(soup)
+				self.user_scrapper(soup)
 				print purpose + " Page Complete: " + str(page)
 			except TypeError:	
 				print purpose + " Page Failed: " + str(page)
+				break
 
-		self.data.extend(temp_data)		
+	def critic_scrapper(self,soup):
+		data = [sc.div.string for sc in soup.find_all("div","product_score")]
+		if type(data[-1]) != type(data[0]):
+			del data[-1]
+		data = [int(i) for i in data]
+		self.critic_data.extend(data)
+	
+	def user_scrapper(self,soup):
+		data = [sc.string for sc in soup.find_all("span","data textscore textscore_favorable")]
+		filter(lambda x: x == "tbd", data)
+		if type(data[-1]) != type(data[0]):
+			del data[-1]
+		data = [int(float(i)*10) for i in data]
+		self.user_data.extend(data)
 	
